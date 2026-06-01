@@ -1,0 +1,460 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans); }
+.dash { padding: 1rem 0; }
+.header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 12px; }
+.header h1 { font-size: 17px; font-weight: 500; color: var(--color-text-primary); }
+.header p { font-size: 12px; color: var(--color-text-secondary); margin-top: 2px; }
+.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 1.5rem; }
+.kpi { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 14px 16px; }
+.kpi-label { font-size: 11px; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px; }
+.kpi-val { font-size: 22px; font-weight: 500; color: var(--color-text-primary); }
+.kpi-sub { font-size: 11px; color: var(--color-text-secondary); margin-top: 2px; }
+.kpi-accent { color: #185FA5; }
+.kpi-danger { color: #A32D2D; }
+.kpi-success { color: #3B6D11; }
+.tabs { display: flex; gap: 2px; margin-bottom: 1rem; border-bottom: 0.5px solid var(--color-border-tertiary); }
+.tab { padding: 8px 16px; font-size: 13px; cursor: pointer; color: var(--color-text-secondary); border-bottom: 2px solid transparent; background: none; border-top: none; border-left: none; border-right: none; }
+.tab.active { color: #185FA5; border-bottom-color: #185FA5; font-weight: 500; }
+.section { display: none; }
+.section.active { display: block; }
+.filter-bar { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; align-items: center; }
+.filter-bar select, .filter-bar input { font-size: 13px; padding: 6px 10px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); color: var(--color-text-primary); }
+.tbl-wrap { overflow-x: auto; border-radius: var(--border-radius-lg); border: 0.5px solid var(--color-border-tertiary); margin-bottom: 1.5rem; }
+table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 900px; }
+thead th { background: var(--color-background-secondary); color: var(--color-text-secondary); font-weight: 500; padding: 8px 10px; text-align: left; font-size: 11px; border-bottom: 0.5px solid var(--color-border-tertiary); position: sticky; top: 0; }
+thead th.num { text-align: right; }
+tbody tr { border-bottom: 0.5px solid var(--color-border-tertiary); }
+tbody tr:last-child { border-bottom: none; }
+tbody td { padding: 8px 10px; color: var(--color-text-primary); vertical-align: top; }
+tbody td.num { text-align: right; font-variant-numeric: tabular-nums; }
+tfoot td { padding: 9px 10px; font-weight: 500; font-size: 12px; background: var(--color-background-secondary); border-top: 0.5px solid var(--color-border-primary); }
+tfoot td.num { text-align: right; }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 500; }
+.badge-blue { background: #E6F1FB; color: #0C447C; }
+.badge-gray { background: #F1EFE8; color: #5F5E5A; }
+.badge-teal { background: #E1F5EE; color: #085041; }
+.badge-coral { background: #FAECE7; color: #993C1D; }
+.badge-amber { background: #FAEEDA; color: #854F0B; }
+.badge-purple { background: #EEEDFE; color: #3C3489; }
+.badge-pink { background: #FBEAF0; color: #72243E; }
+.badge-green { background: #EAF3DE; color: #3B6D11; }
+.pbar-wrap { background: var(--color-background-secondary); border-radius: 4px; height: 5px; min-width: 60px; overflow: hidden; }
+.pbar-fill { height: 100%; border-radius: 4px; background: #185FA5; }
+.pbar-fill.over { background: #A32D2D; }
+.neg { color: #A32D2D; }
+.pos { color: #3B6D11; }
+.section-title { font-size: 14px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 12px; margin-top: 8px; }
+.ejec-form { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1.25rem; margin-bottom: 1.5rem; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+.form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+label { font-size: 12px; color: var(--color-text-secondary); display: block; margin-bottom: 4px; }
+.form-field { display: flex; flex-direction: column; }
+select, input[type=text], input[type=number], textarea { font-size: 13px; padding: 7px 10px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); color: var(--color-text-primary); width: 100%; }
+textarea { resize: vertical; min-height: 60px; }
+.btn-primary { background: #185FA5; color: #fff; border: none; border-radius: var(--border-radius-md); padding: 8px 18px; font-size: 13px; font-weight: 500; cursor: pointer; }
+.btn-primary:hover { background: #0C447C; }
+.btn-danger { background: none; border: 0.5px solid #A32D2D; color: #A32D2D; border-radius: var(--border-radius-md); padding: 4px 10px; font-size: 11px; cursor: pointer; }
+.log-entry { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 12px 14px; margin-bottom: 8px; }
+.log-entry-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
+.log-entry-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); }
+.log-entry-amount { font-size: 14px; font-weight: 500; color: #185FA5; white-space: nowrap; }
+.log-entry-meta { font-size: 11px; color: var(--color-text-secondary); }
+.log-entry-desc { font-size: 12px; color: var(--color-text-primary); margin-top: 5px; border-left: 2px solid #185FA5; padding-left: 8px; }
+.empty { text-align: center; padding: 2rem; color: var(--color-text-tertiary); font-size: 13px; }
+.chart-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+@media(max-width:600px){ .chart-wrap { grid-template-columns: 1fr; } .form-grid { grid-template-columns: 1fr; } .form-grid-3 { grid-template-columns: 1fr; } }
+</style>
+
+<div class="dash">
+  <div class="header">
+    <div>
+      <h1><i class="ti ti-chart-bar" aria-hidden="true"></i> Dashboard POI 2026 — GCPS</h1>
+      <p>Anexo 8 · Plan Operativo Institucional · Ejecución Presupuestal</p>
+    </div>
+    <select id="gerFilter" style="font-size:12px; padding:6px 10px;">
+      <option value="">Todas las gerencias</option>
+    </select>
+  </div>
+
+  <div class="kpi-grid" id="kpiGrid"></div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('tabla')"><i class="ti ti-table" aria-hidden="true"></i> Cuadro general</button>
+    <button class="tab" onclick="switchTab('ejecucion')"><i class="ti ti-plus" aria-hidden="true"></i> Registrar ejecución</button>
+    <button class="tab" onclick="switchTab('historial')"><i class="ti ti-list" aria-hidden="true"></i> Historial registros</button>
+    <button class="tab" onclick="switchTab('graficos')"><i class="ti ti-chart-pie" aria-hidden="true"></i> Gráficos</button>
+  </div>
+
+  <div id="tab-tabla" class="section active">
+    <div class="filter-bar">
+      <input id="search" type="text" placeholder="Buscar sub actividad..." style="width:220px;" oninput="renderTable()">
+      <select id="actFilter" onchange="renderTable()" style="font-size:12px;">
+        <option value="">Todas las actividades</option>
+      </select>
+    </div>
+    <div class="tbl-wrap">
+      <table id="mainTable">
+        <thead>
+          <tr>
+            <th style="min-width:240px;">Denominación de la Sub Actividad</th>
+            <th>Gerencia</th>
+            <th class="num">Presupuesto</th>
+            <th class="num" colspan="5" style="text-align:center; border-left:1px solid #e5e4de;">— Programación —</th>
+            <th class="num" colspan="3" style="text-align:center; border-left:1px solid #e5e4de;">— Ejecución Presupuestal —</th>
+            <th class="num" colspan="2" style="text-align:center; border-left:1px solid #e5e4de;">— Saldo —</th>
+          </tr>
+          <tr>
+            <th></th><th></th><th class="num">Total S/.</th>
+            <th class="num" style="border-left:1px solid #e5e4de;">I</th>
+            <th class="num">II</th><th class="num">III</th><th class="num">IV</th>
+            <th class="num">Total S/.</th>
+            <th class="num" style="border-left:1px solid #e5e4de;">Ejec. S/.</th>
+            <th class="num">+Reg.</th>
+            <th class="num">Total</th>
+            <th class="num" style="border-left:1px solid #e5e4de;">S/. Saldo</th>
+            <th class="num">%</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+        <tfoot id="tableFoot"></tfoot>
+      </table>
+    </div>
+  </div>
+
+  <div id="tab-ejecucion" class="section">
+    <p class="section-title">Registrar nuevo ingreso de ejecución presupuestal</p>
+    <div class="ejec-form">
+      <div class="form-grid">
+        <div class="form-field">
+          <label>Sub Actividad</label>
+          <select id="ejecSub"></select>
+        </div>
+        <div class="form-field">
+          <label>Tipo de gasto</label>
+          <select id="ejecTipo">
+            <option value="ejec_viaticos">Viáticos</option>
+            <option value="ejec_pasajes">Pasajes</option>
+            <option value="ejec_med_general">Med. General</option>
+            <option value="ejec_med_familia">Med. de Familia</option>
+            <option value="ejec_qf">Q.F.</option>
+            <option value="ejec_admin">Administrador</option>
+            <option value="ejec_obstetra">Obstetra</option>
+            <option value="ejec_ingeniero">Ingeniero</option>
+            <option value="ejec_enfermera">Enfermera</option>
+            <option value="ejec_alimentos">Alimentos</option>
+            <option value="ejec_otros">Otros Servicios</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-grid-3">
+        <div class="form-field">
+          <label>Monto S/.</label>
+          <input type="number" id="ejecMonto" placeholder="0.00" step="0.01" min="0">
+        </div>
+        <div class="form-field">
+          <label>Fecha</label>
+          <input type="text" id="ejecFecha" placeholder="dd/mm/aaaa">
+        </div>
+        <div class="form-field">
+          <label>Fuente / motivo</label>
+          <input type="text" id="ejecFuente" placeholder="Ej: Compra de materiales, viaje a...">
+        </div>
+      </div>
+      <div class="form-field" style="margin-bottom:12px;">
+        <label>Descripción detallada</label>
+        <textarea id="ejecDesc" placeholder="Describe de dónde proviene este gasto, qué se compró, en qué fecha, quién lo realizó..."></textarea>
+      </div>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <button class="btn-primary" onclick="registrarEjecucion()"><i class="ti ti-plus" aria-hidden="true"></i> Registrar</button>
+        <span id="ejecMsg" style="font-size:12px; color:var(--color-text-secondary);"></span>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-historial" class="section">
+    <div class="filter-bar">
+      <input id="searchLog" type="text" placeholder="Buscar en registros..." style="width:220px;" oninput="renderLog()">
+      <select id="logSubFilter" onchange="renderLog()" style="font-size:12px;">
+        <option value="">Todas las sub actividades</option>
+      </select>
+    </div>
+    <div id="logContainer"></div>
+  </div>
+
+  <div id="tab-graficos" class="section">
+    <div class="chart-wrap">
+      <div>
+        <p class="section-title">Presupuesto vs Ejecución por gerencia</p>
+        <div style="position:relative; height:280px;">
+          <canvas id="chart1" role="img" aria-label="Gráfico de barras comparando presupuesto programado vs ejecución por gerencia"></canvas>
+        </div>
+      </div>
+      <div>
+        <p class="section-title">Distribución del saldo presupuestal</p>
+        <div style="position:relative; height:280px;">
+          <canvas id="chart2" role="img" aria-label="Gráfico de distribución del saldo presupuestal por gerencia"></canvas>
+        </div>
+      </div>
+    </div>
+    <div>
+      <p class="section-title">Ejecución acumulada por sub actividad (Top 15 con presupuesto)</p>
+      <div style="position:relative; min-height:500px;" id="chart3wrap">
+        <canvas id="chart3" role="img" aria-label="Gráfico de barras horizontales de ejecución por sub actividad"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const RAW = [{"id":1,"sub_actividad":"Actualización de los requisitos técnicos para la implementación de las UPSS Ocupacional en EsSalud","gerencia":"GPNAIS-SGPE","actividad":"Formulación y/o Actualización de Documentos Normativos","presupuesto":7232,"prog_I":0,"prog_II":1,"prog_III":0,"prog_IV":0,"prog_total":7232,"ejec_total":25500,"ejec_viaticos":0,"ejec_pasajes":0,"ejec_med_general":24500,"ejec_med_familia":500,"ejec_qf":0,"ejec_admin":0,"ejec_obstetra":0,"ejec_ingeniero":0,"ejec_enfermera":500,"ejec_alimentos":0,"ejec_otros":0,"saldo_total":-17268},{"id":2,"sub_actividad":"Actualizar el documento técnico de fortalecimiento de los cuidados críticos en el Seguro Social de Salud","gerencia":"GPNAIS-SGPE","actividad":"Formulación y/o Actualización de Documentos Normativos","presupuesto":0,"prog_I":0,"prog_II":0,"prog_III":1,"prog_IV":0,"prog_total":24000,"ejec_total":24000,"ejec_viaticos":0,"ejec_pasajes":0,"ejec_med_general":24000,"ejec_med_familia":0,"ejec_qf":0,"ejec_admin":0,"ejec_obstetra":0,"ejec_ingeniero":0,"ejec_enfermera":0,"ejec_alimentos":0,"ejec_otros":0,"saldo_total":0},{"id":3,"sub_actividad":"Actualizar la Normativa para la organización y funcionamiento del sistema de emergencias y urgencias del Seguro Social de Salud","gerencia":"GPNAIS-SGPE","actividad":"Formulación y/o Actualización de Documentos Normativos","presupuesto":24000,"prog_I":0,"prog_II":1,"prog_III":0,"prog_IV":0,"prog_total":0,"ejec_total":500,"ejec_viaticos":0,"ejec_pasajes":0,"ejec_med_general":0,"ejec_med_familia":0,"ejec_qf":0,"ejec_admin":0,"ejec_obstetra":500,"ejec_ingeniero":0,"ejec_enfermera":0,"ejec_alimentos":0,"ejec_otros":0,"saldo_total":0},{"id":4,"sub_actividad":"Actualizar las Normas para optimizar la distribución de las camas hospitalarias en EsSalud","gerencia":"GPNAIS-SGPE","actividad":"Formulación y/o Actualización de Documentos Normativos","presupuesto":0,"prog_I":0,"prog_II":1,"prog_III":0,"prog_IV":0,"prog_total":0,"ejec_total":0,"ejec_viaticos":0,"ejec_pasajes":0,"ejec_med_general":0,"ejec_med_familia":0,"ejec_qf":0,"ejec_admin":0,"ejec_obstetra":0,"ejec_ingeniero":0,"ejec_enfermera":0,"ejec_alimentos":0,"ejec_otros":0,"saldo_total":0},{"id":5,"sub_actividad":"Aprobar Documentos normativos de atención integral de salud: Criterios de priorización del parto por cesárea","gerencia":"GPNAIS-SGNAPS","actividad":"Formulación y/o Actualización de Documentos Normativos","presupuesto":0,"prog_I":0,"prog_II":0,"prog_III":1,"prog_IV":0,"prog_total":0,"ejec_total":0,"ejec_viaticos":0,"ejec_pasajes":0,"ejec_med_general":0,"ejec_med_familia":0,"ejec_qf":0,"ejec_admin":0,"ejec_obstetra":0,"ejec_ingeniero":0,"ejec_enfermera":0,"ejec_alimentos":0,"ejec_otros":0,"saldo_total":0},{"id":6,"sub_actividad":"Aprobar Documentos normativos de atención integral de salud: Manejo no farmacológico de pacientes con HTA, DM, sobrepeso y Obesidad","gerencia":"GPNAIS-SGNAPS","actividad":"Formulación y/o Actualización de Documentos Normativos","presupuesto":0,"prog_I":0,"prog_II":0,"prog_III":1,"prog_IV":0,"prog_total":0,"ejec_total":0,"ejec_viaticos":0,"ejec_pasajes":0,"ejec_med_general":0,"ejec_med_familia":0,"ejec_qf":0,"ejec_admin":0,"ejec_obstetra":0,"ejec_ingeniero":0,"ejec_enfermera":0,"ejec_alimentos":0,"ejec_otros":0,"saldo_total":0},{"id":7,"sub_actividad":"Aprobar Documentos normativos de atención integral de salud: Manual del Cuidado Integral de la Salud Mental en EsSalud","gerencia":"GPNAIS-SGNAPS","actividad":"Formulación y/o Actualización de Documentos Normativos","presupuesto":0,"prog_I":0,"prog_II":0,"prog_III":1,"prog_IV":0,"prog_total":0,"ejec_total":2000,"ejec_viaticos":0,"ejec_pasajes":0,"ejec_med_general":0,"ejec_med_familia":0,"ejec_qf":0,"ejec_admin":0,"ejec_obstetra":0,"ejec_ingeniero":0,"ejec_enfermera":0,"ejec_alimentos":0,"ejec_otros":2000,"saldo_total":0},{"id":8,"sub_actividad":"Aprobar Documentos normativos de atención integral de salud: Norma para la Atención Integral de la TB en EsSalud","gerencia":"GPNAIS-SGNAPS","actividad":"Formulación y/o Actualización de Documentos Normativos","presupuesto":0,"prog_I":0,"prog_II":0,"prog_III":1,"prog_IV":0,"prog_total":0,"ejec_total":4000,"ejec_viaticos":0,"ejec_pasajes":0,"ejec_med_general":0,"ejec_med_familia":0,"ejec_qf":0,"ejec_admin":0,"ejec_obstetra":0,"ejec_ingeniero":0,"ejec_enfermera":0,"ejec_alimentos":0,"ejec_otros":4000,"saldo_total":0},{"id":9,"sub_actividad":"Aprobar Documento normativo: Actalización del Manual de Anatomía Patológica 2026","gerencia":"GPNAIS-SGNADYT","actividad":"Formulación y/o Actualización de Documentos Normativos","presupuesto":0,"prog_I":0,"prog_II":0,"prog_III":1,"prog_IV":0,"prog_total":0,"ejec_total":0,"ejec_viaticos":0,"ejec_pasajes":0,"ejec_med_general":0,"ejec_med_familia":0,"ejec_qf":0,"ejec_admin":0,"ejec_obstetra":0,"ejec_ingeniero":0,"ejec_enfermera":0,"ejec_alimentos":0,"ejec_otros":0,"saldo_total":0},{"id":14,"sub_actividad":"Guia actividades asistenciales profesionales quimicos Farmaceuticos ESSALUD","gerencia":"GPNAIS-SGNADYT","actividad":"Formulación y/o Actualización de Documentos Normativos","presupuesto":21000,"prog_I":0,"prog_II":0,"prog_III":0,"prog_IV":1,"prog_total":34000,"ejec_total":21000,"ejec_viaticos":0,"ejec_pasajes":0,"ejec_med_general":0,"ejec_med_familia":0,"ejec_qf":21000,"ejec_admin":0,"ejec_obstetra":0,"ejec_ingeniero":0,"ejec_enfermera":0,"ejec_alimentos":0,"ejec_otros":0,"saldo_total":13000},{"id":17,"sub_actividad":"Actualizacion Directiva Referencia y Contrarreferencia ESSALUD","gerencia":"GPNAIS-SGNSS","actividad":"Formulación y/o Actualización de Documentos Normativos","presupuesto":1500,"prog_I":0,"prog_II":0,"prog_III":0,"prog_IV":1,"prog_total":1500,"ejec_total":1399,"ejec_viaticos":0,"ejec_pasajes":0,"ejec_med_general":0,"ejec_med_familia":0,"ejec_qf":0,"ejec_admin":0,"ejec_obstetra":0,"ejec_ingeniero":0,"ejec_enfermera":0,"ejec_alimentos":1399,"ejec_otros":0,"saldo_total":101},{"id":21,"sub_actividad":"Plan de Trabajo: Abordaje Integral Población Expuesta a Metales Pesados ESSALUD","gerencia":"GSAM","actividad":"Aprobacion de documentos normativos de Salud Ambiental","presupuesto":19500,"prog_I":0,"prog_II":1,"prog_III":0,"prog_IV":0,"prog_total":33500,"ejec_total":19500,"ejec_viaticos":0,"ejec_pasajes":0,"ejec_med_general":19500,"ejec_med_familia":0,"ejec_qf":0,"ejec_admin":0,"ejec_obstetra":0,"ejec_ingeniero":0,"ejec_enfermera":0,"ejec_alimentos":0,"ejec_otros":0,"saldo_total":14000},{"id":23,"sub_actividad":"Supervisiones categorización IPRESS ESSALUD","gerencia":"GPNAIS-SGNSS","actividad":"Supervisión a las IPRESS","presupuesto":12675,"prog_I":3,"prog_II":3,"prog_III":3,"prog_IV":2,"prog_total":12675,"ejec_total":0,"ejec_viaticos":0,"ejec_pasajes":0,"ejec_med_general":0,"ejec_med_familia":0,"ejec_qf":0,"ejec_admin":0,"ejec_obstetra":0,"ejec_ingeniero":0,"ejec_enfermera":0,"ejec_alimentos":0,"ejec_otros":0,"saldo_total":12675},{"id":24,"sub_actividad":"Seguimiento Plan Trabajo Metales Pesados ESSALUD","gerencia":"GSAM","actividad":"Monitorear cumplimiento normas Salud Ambiental","presupuesto":8080,"prog_I":1,"prog_II":3,"prog_III":3,"prog_IV":2,"prog_total":8080,"ejec_total":4816.91,"ejec_viaticos":3444,"ejec_pasajes":1372.91,"ejec_med_general":0,"ejec_med_familia":0,"ejec_qf":0,"ejec_admin":0,"ejec_obstetra":0,"ejec_ingeniero":0,"ejec_enfermera":0,"ejec_alimentos":0,"ejec_otros":0,"saldo_total":3263.09},{"id":25,"sub_actividad":"Evaluación control manejo residuos sólidos IPRESS ESSALUD","gerencia":"GSAM","actividad":"Monitorear cumplimiento normas Salud Ambiental","presupuesto":4000,"prog_I":0,"prog_II":1,"prog_III":0,"prog_IV":1,"prog_total":1600,"ejec_total":0,"ejec_viaticos":0,"ejec_pasajes":0,"ejec_med_general":0,"ejec_med_familia":0,"ejec_qf":0,"ejec_admin":0,"ejec_obstetra":0,"ejec_ingeniero":0,"ejec_enfermera":0,"ejec_alimentos":0,"ejec_otros":0,"saldo_total":1600},{"id":26,"sub_actividad":"Evaluación limpieza desinfección IPRESS ESSALUD","gerencia":"GSAM","actividad":"Monitorear cumplimiento normas Salud Ambiental","presupuesto":6160,"prog_I":0,"prog_II":1,"prog_III":1,"prog_IV":1,"prog_total":6160,"ejec_total":0,"ejec_viaticos":0,"ejec_pasajes":0,"ejec_med_general":0,"ejec_med_familia":0,"ejec_qf":0,"ejec_admin":0,"ejec_obstetra":0,"ejec_ingeniero":0,"ejec_enfermera":0,"ejec_alimentos":0,"ejec_otros":0,"saldo_total":6160},{"id":27,"sub_actividad":"Normas Bioseguridad ESSALUD","gerencia":"GSAM","actividad":"Monitorear cumplimiento normas Salud Ambiental","presupuesto":8640,"prog_I":1,"prog_II":1,"prog_III":1,"prog_IV":1,"prog_total":8640,"ejec_total":0,"ejec_viaticos":0,"ejec_pasajes":0,"ejec_med_general":0,"ejec_med_familia":0,"ejec_qf":0,"ejec_admin":0,"ejec_obstetra":0,"ejec_ingeniero":0,"ejec_enfermera":0,"ejec_alimentos":0,"ejec_otros":0,"saldo_total":8640},{"id":28,"sub_actividad":"Seguimiento Normas ISO 14001 Gestión Ambiental hospitales","gerencia":"GSAM","actividad":"Monitorear cumplimiento normas Salud Ambiental","presupuesto":18000,"prog_I":0,"prog_II":1,"prog_III":1,"prog_IV":1,"prog_total":30000,"ejec_total":18000,"ejec_viaticos":0,"ejec_pasajes":0,"ejec_med_general":0,"ejec_med_familia":0,"ejec_qf":0,"ejec_admin":0,"ejec_obstetra":0,"ejec_ingeniero":18000,"ejec_enfermera":0,"ejec_alimentos":0,"ejec_otros":0,"saldo_total":12000},{"id":34,"sub_actividad":"Asistencia Técnica Salud Materna GPNAIS","gerencia":"GPNAIS-SGNAPS","actividad":"Asistencias técnicas prestaciones Salud","presupuesto":22911,"prog_I":1,"prog_II":1,"prog_III":1,"prog_IV":1,"prog_total":22911,"ejec_total":2186.5,"ejec_viaticos":0,"ejec_pasajes":0,"ejec_med_general":0,"ejec_med_familia":0,"ejec_qf":0,"ejec_admin":0,"ejec_obstetra":0,"ejec_ingeniero":0,"ejec_enfermera":0,"ejec_alimentos":2186.5,"ejec_otros":0,"saldo_total":20724.5},{"id":36,"sub_actividad":"Asistencia Técnica HTA-DM GPNAIS","gerencia":"GPNAIS-SGNAPS","actividad":"Asistencias técnicas prestaciones Salud","presupuesto":21214,"prog_I":1,"prog_II":2,"prog_III":1,"prog_IV":1,"prog_total":21214,"ejec_total":1412.5,"ejec_viaticos":0,"ejec_pasajes":100,"ejec_med_general":0,"ejec_med_familia":0,"ejec_qf":0,"ejec_admin":0,"ejec_obstetra":0,"ejec_ingeniero":0,"ejec_enfermera":0,"ejec_alimentos":1312.5,"ejec_otros":0,"saldo_total":19801.5},{"id":37,"sub_actividad":"Asistencia Técnica Salud Mental GPNAIS","gerencia":"GPNAIS-SGNAPS","actividad":"Asistencias técnicas prestaciones Salud","presupuesto":6360,"prog_I":0,"prog_II":1,"prog_III":0,"prog_IV":1,"prog_total":6360,"ejec_total":0,"ejec_viaticos":0,"ejec_pasajes":0,"ejec_med_general":0,"ejec_med_familia":0,"ejec_qf":0,"ejec_admin":0,"ejec_obstetra":0,"ejec_ingeniero":0,"ejec_enfermera":0,"ejec_alimentos":0,"ejec_otros":0,"saldo_total":6360},{"id":38,"sub_actividad":"Asistencia Técnica VIH/SIDA GPNAIS","gerencia":"GPNAIS-SGNAPS","actividad":"Asistencias técnicas prestaciones Salud","presupuesto":5600,"prog_I":0,"prog_II":1,"prog_III":0,"prog_IV":1,"prog_total":5600,"ejec_total":0,"ejec_viaticos":0,"ejec_pasajes":0,"ejec_med_general":0,"ejec_med_familia":0,"ejec_qf":0,"ejec_admin":0,"ejec_obstetra":0,"ejec_ingeniero":0,"ejec_enfermera":0,"ejec_alimentos":0,"ejec_otros":0,"saldo_total":5600},{"id":39,"sub_actividad":"Asistencia Técnica TB GPNAIS","gerencia":"GPNAIS-SGNAPS","actividad":"Asistencias técnicas prestaciones Salud","presupuesto":6312,"prog_I":1,"prog_II":1,"prog_III":1,"prog_IV":1,"prog_total":6312,"ejec_total":0,"ejec_viaticos":0,"ejec_pasajes":0,"ejec_med_general":0,"ejec_med_familia":0,"ejec_qf":0,"ejec_admin":0,"ejec_obstetra":0,"ejec_ingeniero":0,"ejec_enfermera":0,"ejec_alimentos":0,"ejec_otros":0,"saldo_total":6312},{"id":40,"sub_actividad":"Asistencia Técnica Enfermedad Osteomuscular GPNAIS","gerencia":"GPNAIS-SGNAPS","actividad":"Asistencias técnicas prestaciones Salud","presupuesto":2700,"prog_I":1,"prog_II":0,"prog_III":1,"prog_IV":0,"prog_total":2700,"ejec_total":1399,"ejec_viaticos":0,"ejec_pasajes":0,"ejec_med_general":0,"ejec_med_familia":0,"ejec_qf":0,"ejec_admin":0,"ejec_obstetra":0,"ejec_ingeniero":0,"ejec_enfermera":0,"ejec_alimentos":1399,"ejec_otros":0,"saldo_total":1301},{"id":46,"sub_actividad":"Asistencia Técnica Manual Anatomía Patológica ESSALUD","gerencia":"GPNAIS-SGNADYT","actividad":"Asistencias técnicas prestaciones Salud","presupuesto":3000,"prog_I":0,"prog_II":0,"prog_III":0,"prog_IV":1,"prog_total":3000,"ejec_total":0,"ejec_viaticos":0,"ejec_pasajes":0,"ejec_med_general":0,"ejec_med_familia":0,"ejec_qf":0,"ejec_admin":0,"ejec_obstetra":0,"ejec_ingeniero":0,"ejec_enfermera":0,"ejec_alimentos":0,"ejec_otros":0,"saldo_total":3000},{"id":51,"sub_actividad":"Asistencia Técnica Fortalecimiento IPRESS Residuos Sólidos GSAM","gerencia":"GSAM","actividad":"Asistencia técnica normas gestión Salud Ambiental","presupuesto":5322,"prog_I":0,"prog_II":1,"prog_III":0,"prog_IV":1,"prog_total":5322,"ejec_total":0,"ejec_viaticos":0,"ejec_pasajes":0,"ejec_med_general":0,"ejec_med_familia":0,"ejec_qf":0,"ejec_admin":0,"ejec_obstetra":0,"ejec_ingeniero":0,"ejec_enfermera":0,"ejec_alimentos":0,"ejec_otros":0,"saldo_total":5322},{"id":53,"sub_actividad":"Asistencia Técnica Norma Limpieza y Desinfección GSAM","gerencia":"GSAM","actividad":"Asistencia técnica normas gestión Salud Ambiental","presupuesto":10720,"prog_I":0,"prog_II":1,"prog_III":0,"prog_IV":1,"prog_total":10720,"ejec_total":0,"ejec_viaticos":0,"ejec_pasajes":0,"ejec_med_general":0,"ejec_med_familia":0,"ejec_qf":0,"ejec_admin":0,"ejec_obstetra":0,"ejec_ingeniero":0,"ejec_enfermera":0,"ejec_alimentos":0,"ejec_otros":0,"saldo_total":10720},{"id":57,"sub_actividad":"Asistencia Técnica Red Inteligencia Sanitaria OIIS","gerencia":"OIIS","actividad":"Asistencia Técnica Red Inteligencia Sanitaria","presupuesto":40576,"prog_I":1,"prog_II":3,"prog_III":1,"prog_IV":0,"prog_total":40576,"ejec_total":1244.69,"ejec_viaticos":320,"ejec_pasajes":924.69,"ejec_med_general":0,"ejec_med_familia":0,"ejec_qf":0,"ejec_admin":0,"ejec_obstetra":0,"ejec_ingeniero":0,"ejec_enfermera":0,"ejec_alimentos":0,"ejec_otros":0,"saldo_total":39331.31},{"id":59,"sub_actividad":"Estudios de Prevalencia Infecciones Intrahospitalarias OIIS","gerencia":"OIIS","actividad":"Desarrollo Estudios Epidemiológicos","presupuesto":34410,"prog_I":0,"prog_II":2,"prog_III":1,"prog_IV":0,"prog_total":11760,"ejec_total":1520,"ejec_viaticos":320,"ejec_pasajes":1200,"ejec_med_general":0,"ejec_med_familia":0,"ejec_qf":0,"ejec_admin":0,"ejec_obstetra":0,"ejec_ingeniero":0,"ejec_enfermera":0,"ejec_alimentos":0,"ejec_otros":0,"saldo_total":10240},{"id":67,"sub_actividad":"Control y monitoreo cumplimiento normativa inmunizaciones crecimiento","gerencia":"SGCPAP","actividad":"Monitoreo IPRESS atención primaria","presupuesto":4278,"prog_I":1,"prog_II":1,"prog_III":1,"prog_IV":1,"prog_total":16278,"ejec_total":1545.7,"ejec_viaticos":640,"ejec_pasajes":905.7,"ejec_med_general":0,"ejec_med_familia":0,"ejec_qf":0,"ejec_admin":0,"ejec_obstetra":0,"ejec_ingeniero":0,"ejec_enfermera":0,"ejec_alimentos":0,"ejec_otros":0,"saldo_total":14732.3},{"id":68,"sub_actividad":"Control monitoreo normativas lucha contra anemia SGCPAP","gerencia":"SGCPAP","actividad":"Monitoreo IPRESS atención primaria","presupuesto":4278,"prog_I":1,"prog_II":1,"prog_III":1,"prog_IV":1,"prog_total":16278,"ejec_total":1545.7,"ejec_viaticos":640,"ejec_pasajes":905.7,"ejec_med_general":0,"ejec_med_familia":0,"ejec_qf":0,"ejec_admin":0,"ejec_obstetra":0,"ejec_ingeniero":0,"ejec_enfermera":0,"ejec_alimentos":0,"ejec_otros":0,"saldo_total":14732.3},{"id":69,"sub_actividad":"Control monitoreo normativa PREVENIR SGCPAP","gerencia":"SGCPAP","actividad":"Monitoreo IPRESS atención primaria","presupuesto":4278,"prog_I":0,"prog_II":1,"prog_III":0,"prog_IV":1,"prog_total":18278,"ejec_total":0,"ejec_viaticos":0,"ejec_pasajes":0,"ejec_med_general":0,"ejec_med_familia":0,"ejec_qf":0,"ejec_admin":0,"ejec_obstetra":0,"ejec_ingeniero":0,"ejec_enfermera":0,"ejec_alimentos":0,"ejec_otros":0,"saldo_total":18278},{"id":70,"sub_actividad":"Monitoreo normativas cáncer cuello uterino mama salud materna SGCPAP","gerencia":"SGCPAP","actividad":"Monitoreo IPRESS atención primaria","presupuesto":71356,"prog_I":1,"prog_II":1,"prog_III":1,"prog_IV":1,"prog_total":87356,"ejec_total":42000,"ejec_viaticos":0,"ejec_pasajes":0,"ejec_med_general":21000,"ejec_med_familia":0,"ejec_qf":0,"ejec_admin":21000,"ejec_obstetra":0,"ejec_ingeniero":0,"ejec_enfermera":0,"ejec_alimentos":0,"ejec_otros":0,"saldo_total":45356},{"id":71,"sub_actividad":"Monitoreo cumplimiento modelo cuidado integral enfermedades no transmisibles","gerencia":"SGCPAP","actividad":"Monitoreo IPRESS atención primaria","presupuesto":2878,"prog_I":0,"prog_II":1,"prog_III":0,"prog_IV":1,"prog_total":2878,"ejec_total":0,"ejec_viaticos":0,"ejec_pasajes":0,"ejec_med_general":0,"ejec_med_familia":0,"ejec_qf":0,"ejec_admin":0,"ejec_obstetra":0,"ejec_ingeniero":0,"ejec_enfermera":0,"ejec_alimentos":0,"ejec_otros":0,"saldo_total":2878},{"id":72,"sub_actividad":"Asistencia técnica Medicina Complementaria PREVENIR Redes SGMC","gerencia":"SGMC","actividad":"Asistencia técnica atención primaria medicina complementaria","presupuesto":65119,"prog_I":2,"prog_II":4,"prog_III":4,"prog_IV":2,"prog_total":65119,"ejec_total":0,"ejec_viaticos":0,"ejec_pasajes":0,"ejec_med_general":0,"ejec_med_familia":0,"ejec_qf":0,"ejec_admin":0,"ejec_obstetra":0,"ejec_ingeniero":0,"ejec_enfermera":0,"ejec_alimentos":0,"ejec_otros":0,"saldo_total":65119},{"id":73,"sub_actividad":"Asistencia Técnica Cuidado integral adulto mayor SGPSYPE","gerencia":"SGPSYPE","actividad":"Asistencia técnica atención primaria","presupuesto":6193,"prog_I":1,"prog_II":0,"prog_III":0,"prog_IV":0,"prog_total":6193,"ejec_total":0,"ejec_viaticos":0,"ejec_pasajes":0,"ejec_med_general":0,"ejec_med_familia":0,"ejec_qf":0,"ejec_admin":0,"ejec_obstetra":0,"ejec_ingeniero":0,"ejec_enfermera":0,"ejec_alimentos":0,"ejec_otros":0,"saldo_total":6193},{"id":74,"sub_actividad":"Asistencia Técnica Control Crecimiento Desarrollo adolescente SGPSYPE","gerencia":"SGPSYPE","actividad":"Asistencia técnica atención primaria","presupuesto":6193,"prog_I":0,"prog_II":0,"prog_III":1,"prog_IV":0,"prog_total":6193,"ejec_total":722.5,"ejec_viaticos":0,"ejec_pasajes":0,"ejec_med_general":0,"ejec_med_familia":0,"ejec_qf":0,"ejec_admin":0,"ejec_obstetra":0,"ejec_ingeniero":0,"ejec_enfermera":0,"ejec_alimentos":722.5,"ejec_otros":0,"saldo_total":5470.5},{"id":75,"sub_actividad":"Asistencia Técnica Cuidado prevención anemia niños gestantes SGPSYPE","gerencia":"SGPSYPE","actividad":"Asistencia técnica atención primaria","presupuesto":6193,"prog_I":0,"prog_II":1,"prog_III":0,"prog_IV":0,"prog_total":6193,"ejec_total":0,"ejec_viaticos":0,"ejec_pasajes":0,"ejec_med_general":0,"ejec_med_familia":0,"ejec_qf":0,"ejec_admin":0,"ejec_obstetra":0,"ejec_ingeniero":0,"ejec_enfermera":0,"ejec_alimentos":0,"ejec_otros":0,"saldo_total":6193},{"id":76,"sub_actividad":"Asistencia Técnica Manual Promoción Salud Nutrición SGPSYPE","gerencia":"SGPSYPE","actividad":"Asistencia técnica atención primaria","presupuesto":6193,"prog_I":0,"prog_II":1,"prog_III":0,"prog_IV":0,"prog_total":6193,"ejec_total":0,"ejec_viaticos":0,"ejec_pasajes":0,"ejec_med_general":0,"ejec_med_familia":0,"ejec_qf":0,"ejec_admin":0,"ejec_obstetra":0,"ejec_ingeniero":0,"ejec_enfermera":0,"ejec_alimentos":0,"ejec_otros":0,"saldo_total":6193},{"id":77,"sub_actividad":"Asistencia Técnica Psicoprofilaxis Climaterio SGPSYPE","gerencia":"SGPSYPE","actividad":"Asistencia técnica atención primaria","presupuesto":6193,"prog_I":0,"prog_II":0,"prog_III":0,"prog_IV":1,"prog_total":6193,"ejec_total":0,"ejec_viaticos":0,"ejec_pasajes":0,"ejec_med_general":0,"ejec_med_familia":0,"ejec_qf":0,"ejec_admin":0,"ejec_obstetra":0,"ejec_ingeniero":0,"ejec_enfermera":0,"ejec_alimentos":0,"ejec_otros":0,"saldo_total":6193},{"id":66,"sub_actividad":"Monitoreo cumplimiento normativos Medicina Complementaria SGMC","gerencia":"SGMC","actividad":"Monitoreo atención primaria medicina complementaria","presupuesto":0,"prog_I":0,"prog_II":0,"prog_III":1,"prog_IV":1,"prog_total":0,"ejec_total":100,"ejec_viaticos":0,"ejec_pasajes":0,"ejec_med_general":0,"ejec_med_familia":0,"ejec_qf":0,"ejec_admin":0,"ejec_obstetra":0,"ejec_ingeniero":100,"ejec_enfermera":0,"ejec_alimentos":0,"ejec_otros":0,"saldo_total":0}];
+
+const GERENCIA_COLORS = {
+  'GPNAIS-SGPE':'badge-blue','GPNAIS-SGNAPS':'badge-teal','GPNAIS-SGNADYT':'badge-purple',
+  'GPNAIS-SGNSS':'badge-amber','GSAM':'badge-green','OIIS':'badge-coral',
+  'SGCPAP':'badge-pink','SGMC':'badge-gray','SGPSYPE':'badge-blue'
+};
+
+let registros = [];
+let data = RAW.map(r => ({...r, extra_ejec: 0}));
+
+const fmt = v => v === 0 ? '—' : 'S/ ' + Math.abs(v).toLocaleString('es-PE', {minimumFractionDigits:2, maximumFractionDigits:2});
+const fmtN = v => v === 0 ? '—' : Math.abs(v).toLocaleString('es-PE', {minimumFractionDigits:2, maximumFractionDigits:2});
+
+function getGerencias() {
+  return [...new Set(data.map(r => r.gerencia))].sort();
+}
+
+function getActividades() {
+  return [...new Set(data.map(r => r.actividad))].sort();
+}
+
+function getFilteredData() {
+  const ger = document.getElementById('gerFilter').value;
+  const act = document.getElementById('actFilter') ? document.getElementById('actFilter').value : '';
+  const search = document.getElementById('search') ? document.getElementById('search').value.toLowerCase() : '';
+  return data.filter(r => {
+    if (ger && r.gerencia !== ger) return false;
+    if (act && r.actividad !== act) return false;
+    if (search && !r.sub_actividad.toLowerCase().includes(search)) return false;
+    return true;
+  });
+}
+
+function getEjecTotal(r) { return r.ejec_total + r.extra_ejec; }
+
+function initFilters() {
+  const gers = getGerencias();
+  const gSel = document.getElementById('gerFilter');
+  gers.forEach(g => { const o = document.createElement('option'); o.value = g; o.textContent = g; gSel.appendChild(o); });
+  gSel.onchange = () => { renderKPIs(); renderTable(); renderCharts(); };
+
+  const actSel = document.getElementById('actFilter');
+  const acts = getActividades();
+  acts.forEach(a => { const o = document.createElement('option'); o.value = a; o.textContent = a.length > 50 ? a.substring(0, 50) + '...' : a; actSel.appendChild(o); });
+
+  const ejecSub = document.getElementById('ejecSub');
+  data.forEach(r => { const o = document.createElement('option'); o.value = r.id; o.textContent = r.sub_actividad.substring(0,80); ejecSub.appendChild(o); });
+
+  const logSub = document.getElementById('logSubFilter');
+  data.forEach(r => { const o = document.createElement('option'); o.value = r.id; o.textContent = r.sub_actividad.substring(0,80); logSub.appendChild(o); });
+}
+
+function renderKPIs() {
+  const filtered = getFilteredData();
+  const totalPres = filtered.reduce((s, r) => s + r.presupuesto, 0);
+  const totalProg = filtered.reduce((s, r) => s + r.prog_total, 0);
+  const totalEjec = filtered.reduce((s, r) => s + getEjecTotal(r), 0);
+  const totalSaldo = totalProg - totalEjec;
+  const pct = totalProg > 0 ? (totalEjec / totalProg * 100) : 0;
+  const totalReg = registros.filter(reg => {
+    const row = data.find(r => r.id == reg.subId);
+    const ger = document.getElementById('gerFilter').value;
+    return !ger || (row && row.gerencia === ger);
+  }).reduce((s, r) => s + r.monto, 0);
+
+  document.getElementById('kpiGrid').innerHTML = `
+    <div class="kpi"><div class="kpi-label">Presupuesto total</div><div class="kpi-val">S/ ${Math.round(totalPres).toLocaleString('es-PE')}</div><div class="kpi-sub">${filtered.length} sub actividades</div></div>
+    <div class="kpi"><div class="kpi-label">Programación total</div><div class="kpi-val kpi-accent">S/ ${Math.round(totalProg).toLocaleString('es-PE')}</div><div class="kpi-sub">Meta anual programada</div></div>
+    <div class="kpi"><div class="kpi-label">Ejecución total</div><div class="kpi-val ${totalEjec > totalProg ? 'kpi-danger':'kpi-success'}">S/ ${Math.round(totalEjec).toLocaleString('es-PE')}</div><div class="kpi-sub">${pct.toFixed(1)}% del programado</div></div>
+    <div class="kpi"><div class="kpi-label">Saldo disponible</div><div class="kpi-val ${totalSaldo < 0 ? 'kpi-danger':''}">S/ ${Math.round(Math.abs(totalSaldo)).toLocaleString('es-PE')}</div><div class="kpi-sub">${totalSaldo < 0 ? '⚠ Excedido' : 'Por ejecutar'}</div></div>
+    <div class="kpi"><div class="kpi-label">Ingresos registrados</div><div class="kpi-val kpi-accent">S/ ${Math.round(totalReg).toLocaleString('es-PE')}</div><div class="kpi-sub">${registros.length} registro(s) manual(es)</div></div>
+  `;
+}
+
+function renderTable() {
+  const filtered = getFilteredData();
+  const tbody = document.getElementById('tableBody');
+  const tfoot = document.getElementById('tableFoot');
+  let html = '';
+  let totPres=0, totProg=0, totEjec=0, totSaldo=0, totExtra=0;
+  filtered.forEach(r => {
+    const ejec = getEjecTotal(r);
+    const saldo = r.prog_total - ejec;
+    const pct = r.prog_total > 0 ? (ejec / r.prog_total) : 0;
+    const pctPct = Math.min(100, pct * 100);
+    const over = pct > 1;
+    const extraReg = registros.filter(reg => reg.subId == r.id).reduce((s,x)=>s+x.monto,0);
+    totPres += r.presupuesto; totProg += r.prog_total; totEjec += ejec; totSaldo += saldo; totExtra += extraReg;
+    html += `<tr>
+      <td style="max-width:240px; word-break:break-word; font-size:11px; line-height:1.4;">${r.sub_actividad}</td>
+      <td><span class="badge ${GERENCIA_COLORS[r.gerencia]||'badge-gray'}">${r.gerencia}</span></td>
+      <td class="num">${fmtN(r.presupuesto)}</td>
+      <td class="num" style="border-left:1px solid var(--color-border-tertiary);">${r.prog_I||'—'}</td>
+      <td class="num">${r.prog_II||'—'}</td>
+      <td class="num">${r.prog_III||'—'}</td>
+      <td class="num">${r.prog_IV||'—'}</td>
+      <td class="num">${fmtN(r.prog_total)}</td>
+      <td class="num" style="border-left:1px solid var(--color-border-tertiary);">${fmtN(r.ejec_total)}</td>
+      <td class="num ${extraReg>0?'pos':''}">${extraReg>0?'+'+fmtN(extraReg):'—'}</td>
+      <td class="num ${over?'neg':''}">${fmtN(ejec)}</td>
+      <td class="num ${saldo<0?'neg':''}" style="border-left:1px solid var(--color-border-tertiary);">${saldo<0?'-':''}${fmtN(Math.abs(saldo))}</td>
+      <td class="num" style="min-width:80px;">
+        <div style="display:flex;align-items:center;gap:6px;justify-content:flex-end;">
+          <span style="font-size:11px;${over?'color:#A32D2D':''};">${(pct*100).toFixed(1)}%</span>
+          <div class="pbar-wrap" style="width:40px;"><div class="pbar-fill ${over?'over':''}" style="width:${pctPct}%;"></div></div>
+        </div>
+      </td>
+    </tr>`;
+  });
+  tbody.innerHTML = html || '<tr><td colspan="13" class="empty">Sin resultados</td></tr>';
+  tfoot.innerHTML = `<tr>
+    <td colspan="2" style="font-size:11px;">TOTALES (${filtered.length} actividades)</td>
+    <td class="num">${fmtN(totPres)}</td>
+    <td class="num" style="border-left:1px solid var(--color-border-tertiary);" colspan="4"></td>
+    <td class="num">${fmtN(totProg)}</td>
+    <td class="num" style="border-left:1px solid var(--color-border-tertiary);">${fmtN(totEjec - totExtra)}</td>
+    <td class="num ${totExtra>0?'pos':''}">${totExtra>0?'+'+fmtN(totExtra):'—'}</td>
+    <td class="num">${fmtN(totEjec)}</td>
+    <td class="num ${totSaldo<0?'neg':''}" style="border-left:1px solid var(--color-border-tertiary);">${totSaldo<0?'-':''}${fmtN(Math.abs(totSaldo))}</td>
+    <td class="num">${totProg>0?(totEjec/totProg*100).toFixed(1)+'%':'—'}</td>
+  </tr>`;
+}
+
+function registrarEjecucion() {
+  const subId = parseInt(document.getElementById('ejecSub').value);
+  const tipo = document.getElementById('ejecTipo').value;
+  const monto = parseFloat(document.getElementById('ejecMonto').value);
+  const fecha = document.getElementById('ejecFecha').value;
+  const fuente = document.getElementById('ejecFuente').value;
+  const desc = document.getElementById('ejecDesc').value;
+  const msg = document.getElementById('ejecMsg');
+
+  if (!monto || monto <= 0) { msg.textContent = '⚠ Ingrese un monto válido mayor a 0.'; msg.style.color='#A32D2D'; return; }
+  if (!fecha.trim()) { msg.textContent = '⚠ Ingrese la fecha.'; msg.style.color='#A32D2D'; return; }
+  if (!fuente.trim()) { msg.textContent = '⚠ Ingrese la fuente/motivo.'; msg.style.color='#A32D2D'; return; }
+
+  const row = data.find(r => r.id === subId);
+  registros.push({ subId, tipo, monto, fecha, fuente, desc, timestamp: new Date().toLocaleString('es-PE'), subNombre: row ? row.sub_actividad : '', gerencia: row ? row.gerencia : '' });
+  row.extra_ejec += monto;
+  row[tipo] = (row[tipo]||0) + monto;
+
+  document.getElementById('ejecMonto').value = '';
+  document.getElementById('ejecFecha').value = '';
+  document.getElementById('ejecFuente').value = '';
+  document.getElementById('ejecDesc').value = '';
+  msg.textContent = `✓ Registrado: S/ ${monto.toFixed(2)} en "${row.sub_actividad.substring(0,40)}..."`;
+  msg.style.color = '#3B6D11';
+  setTimeout(() => msg.textContent = '', 4000);
+  renderKPIs(); renderTable(); renderLog();
+}
+
+function renderLog() {
+  const search = document.getElementById('searchLog').value.toLowerCase();
+  const subFilter = document.getElementById('logSubFilter').value;
+  const container = document.getElementById('logContainer');
+  const filtered = registros.filter(r => {
+    if (subFilter && r.subId != subFilter) return false;
+    if (search && !r.subNombre.toLowerCase().includes(search) && !r.fuente.toLowerCase().includes(search) && !r.desc.toLowerCase().includes(search)) return false;
+    return true;
+  }).reverse();
+  if (!filtered.length) { container.innerHTML = '<div class="empty"><i class="ti ti-inbox" style="font-size:24px; display:block; margin-bottom:8px;" aria-hidden="true"></i>No hay registros aún. Usa la pestaña "Registrar ejecución".</div>'; return; }
+  const TIPO_MAP = {'ejec_viaticos':'Viáticos','ejec_pasajes':'Pasajes','ejec_med_general':'Med. General','ejec_med_familia':'Med. Familia','ejec_qf':'Q.F.','ejec_admin':'Administrador','ejec_obstetra':'Obstetra','ejec_ingeniero':'Ingeniero','ejec_enfermera':'Enfermera','ejec_alimentos':'Alimentos','ejec_otros':'Otros'};
+  container.innerHTML = filtered.map((r,i) => `
+    <div class="log-entry">
+      <div class="log-entry-header">
+        <div>
+          <div class="log-entry-title">${r.subNombre.substring(0,70)}${r.subNombre.length>70?'...':''}</div>
+          <div class="log-entry-meta"><span class="badge ${GERENCIA_COLORS[r.gerencia]||'badge-gray'}" style="margin-right:6px;">${r.gerencia}</span> ${TIPO_MAP[r.tipo]||r.tipo} · ${r.fecha} · Registrado: ${r.timestamp}</div>
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
+          <div class="log-entry-amount">+ S/ ${r.monto.toLocaleString('es-PE',{minimumFractionDigits:2})}</div>
+          <button class="btn-danger" onclick="eliminarRegistro(${registros.length-1-i})">Eliminar</button>
+        </div>
+      </div>
+      <div class="log-entry-meta" style="margin-bottom:4px;"><strong>Fuente:</strong> ${r.fuente}</div>
+      ${r.desc ? `<div class="log-entry-desc">${r.desc}</div>` : ''}
+    </div>`).join('');
+}
+
+function eliminarRegistro(idx) {
+  const reg = registros[idx];
+  const row = data.find(r => r.id === reg.subId);
+  if (row) { row.extra_ejec -= reg.monto; row[reg.tipo] = Math.max(0, (row[reg.tipo]||0) - reg.monto); }
+  registros.splice(idx, 1);
+  renderKPIs(); renderTable(); renderLog();
+}
+
+let charts = {};
+function renderCharts() {
+  const gers = getGerencias();
+  const gerData = gers.map(g => {
+    const rows = data.filter(r => r.gerencia === g);
+    return { ger: g, prog: rows.reduce((s,r)=>s+r.prog_total,0), ejec: rows.reduce((s,r)=>s+getEjecTotal(r),0), saldo: rows.reduce((s,r)=>s+r.prog_total - getEjecTotal(r),0) };
+  }).filter(g => g.prog > 0 || g.ejec > 0);
+
+  if (charts.c1) charts.c1.destroy();
+  charts.c1 = new Chart(document.getElementById('chart1'), {
+    type: 'bar',
+    data: {
+      labels: gerData.map(g => g.ger),
+      datasets: [
+        { label: 'Programado S/.', data: gerData.map(g => Math.round(g.prog)), backgroundColor: '#B5D4F4', borderColor: '#185FA5', borderWidth: 1 },
+        { label: 'Ejecutado S/.', data: gerData.map(g => Math.round(g.ejec)), backgroundColor: '#9FE1CB', borderColor: '#0F6E56', borderWidth: 1 }
+      ]
+    },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: true, position: 'top', labels: { font: { size: 11 }, boxWidth: 12 } } }, scales: { x: { ticks: { font: { size: 9 }, maxRotation: 45 } }, y: { ticks: { font: { size: 10 }, callback: v => 'S/'+Math.round(v/1000)+'k' } } } }
+  });
+
+  if (charts.c2) charts.c2.destroy();
+  const positiveGers = gerData.filter(g => g.saldo > 0);
+  charts.c2 = new Chart(document.getElementById('chart2'), {
+    type: 'doughnut',
+    data: {
+      labels: positiveGers.map(g => g.ger),
+      datasets: [{ data: positiveGers.map(g => Math.round(g.saldo)), backgroundColor: ['#378ADD','#1D9E75','#BA7517','#D4537E','#7F77DD','#639922','#D85A30','#888780','#E24B4A'] }]
+    },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { size: 9 }, boxWidth: 10 } } } }
+  });
+
+  const top15 = [...data].filter(r => r.presupuesto > 0).sort((a,b) => b.presupuesto - a.presupuesto).slice(0,15);
+  const h = Math.max(400, top15.length * 38 + 80);
+  document.getElementById('chart3wrap').style.height = h + 'px';
+  if (charts.c3) charts.c3.destroy();
+  charts.c3 = new Chart(document.getElementById('chart3'), {
+    type: 'bar',
+    data: {
+      labels: top15.map(r => r.sub_actividad.substring(0,45)+'...'),
+      datasets: [
+        { label: 'Presupuesto', data: top15.map(r => Math.round(r.presupuesto)), backgroundColor: '#CECBF6', borderColor: '#534AB7', borderWidth: 1 },
+        { label: 'Ejecutado', data: top15.map(r => Math.round(getEjecTotal(r))), backgroundColor: '#5DCAA5', borderColor: '#0F6E56', borderWidth: 1 }
+      ]
+    },
+    options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: true, position: 'top', labels: { font: { size: 11 }, boxWidth: 12 } } }, scales: { x: { ticks: { font: { size: 9 }, callback: v => 'S/'+Math.round(v/1000)+'k' } }, y: { ticks: { font: { size: 9 } } } } }
+  });
+}
+
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach((t,i) => { const names = ['tabla','ejecucion','historial','graficos']; t.classList.toggle('active', names[i]===name); });
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  if (name === 'graficos') setTimeout(renderCharts, 100);
+}
+
+initFilters();
+renderKPIs();
+renderTable();
+renderLog();
+</script>
