@@ -286,13 +286,41 @@ function initFilters() {
 
   const actSel = document.getElementById('actFilter');
   const acts = getActividades();
-  acts.forEach(a => { const o = document.createElement('option'); o.value = a; o.textContent = a.length > 50 ? a.substring(0, 50) + '...' : a; actSel.appendChild(o); });
+  acts.forEach(a => {
+  if (!a) return;
+
+  const o = document.createElement('option');
+  o.value = a;
+
+  o.textContent =
+    String(a).length > 50
+      ? String(a).substring(0,50) + '...'
+      : String(a);
+
+  actSel.appendChild(o);
+});
 
   const ejecSub = document.getElementById('ejecSub');
-  data.forEach(r => { const o = document.createElement('option'); o.value = r.id; o.textContent = r.sub_actividad.substring(0,80); ejecSub.appendChild(o); });
+  data.forEach(r => {
+  if (!r.sub_actividad) return;
+
+  const o = document.createElement('option');
+  o.value = r.id;
+  o.textContent = String(r.sub_actividad).substring(0,80);
+
+  ejecSub.appendChild(o);
+});
 
   const logSub = document.getElementById('logSubFilter');
-  data.forEach(r => { const o = document.createElement('option'); o.value = r.id; o.textContent = r.sub_actividad.substring(0,80); logSub.appendChild(o); });
+  data.forEach(r => {
+  if (!r.sub_actividad) return;
+
+  const o = document.createElement('option');
+  o.value = r.id;
+  o.textContent = String(r.sub_actividad).substring(0,80);
+
+  logSub.appendChild(o);
+});
 }
 
 function renderKPIs() {
