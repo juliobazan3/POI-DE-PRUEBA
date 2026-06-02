@@ -223,10 +223,37 @@ async function cargarDatos() {
 
     RAW = await respuesta.json();
 
-    data = RAW.map(r => ({
-      ...r,
-      extra_ejec: 0
-    }));
+data = RAW.map((r, i) => ({
+
+  id: i + 1,
+
+  sub_actividad: r.Denominacion || '',
+
+  gerencia: 'GCPS',
+
+  actividad: r.Cod_Act || '',
+
+  presupuesto: Number(r.Presupuesto) || 0,
+
+  prog_I: Number(r.I) || 0,
+  prog_II: Number(r.II) || 0,
+  prog_III: Number(r.III) || 0,
+  prog_IV: Number(r.IV) || 0,
+
+  prog_total:
+      (Number(r.I) || 0) +
+      (Number(r.II) || 0) +
+      (Number(r.III) || 0) +
+      (Number(r.IV) || 0),
+
+  ejec_total:
+      (Number(r.Remun) || 0) +
+      (Number(r.Bienes) || 0) +
+      (Number(r.Serv) || 0),
+
+  extra_ejec: 0
+
+}));
 
     initFilters();
     renderKPIs();
