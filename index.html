@@ -223,6 +223,8 @@ async function cargarDatos() {
 
     RAW = await respuesta.json();
 
+console.log(RAW[0]);
+
 data = RAW.map((r, i) => ({
 
   id: i + 1,
